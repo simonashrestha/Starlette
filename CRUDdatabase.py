@@ -20,7 +20,7 @@ middleware = [
 ]
 
 # Models
-class Item(Base):
+class Products(Base):
     __tablename__ = "Products"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
@@ -33,14 +33,14 @@ Base.metadata.create_all(bind=engine)
 # Routes
 async def list_items(request: Request):
     session = SessionLocal()
-    items = session.query(Item).all()
+    items = session.query(Products).all()
     session.close()
     return JSONResponse([{"id": item.id, "name": item.name, "quantity": item.quantity, "category": item.category} for item in items])
 
 async def get_item(request: Request):
     item_id = request.path_params['item_id']
     session = SessionLocal()
-    item = session.query(Item).filter(Item.id == item_id).first()
+    item = session.query(Products).filter(Products.id == item_id).first()
     session.close()
     if item:
         return JSONResponse({"id": item.id, "name": item.name, "quantity": item.quantity, "category": item.category})
@@ -48,7 +48,7 @@ async def get_item(request: Request):
 
 async def create_item(request: Request):
     data = await request.json()
-    item = Item(name=data['name'], quantity=data['quantity'], category=data['category'])
+    item = Products(name=data['name'], quantity=data['quantity'], category=data['category'])
     session = SessionLocal()
     session.add(item)
     session.commit()
@@ -60,7 +60,7 @@ async def update_item(request: Request):
     item_id = request.path_params['item_id']
     data = await request.json()
     session = SessionLocal()
-    item = session.query(Item).filter(Item.id == item_id).first()
+    item = session.query(Products).filter(Products.id == item_id).first()
     if item:
         item.name = data['name']
         session.commit()
@@ -73,7 +73,7 @@ async def update_item(request: Request):
 async def delete_item(request: Request):
     item_id = request.path_params['item_id']
     session = SessionLocal()
-    item = session.query(Item).filter(Item.id == item_id).first()
+    item = session.query(Products).filter(Products.id == item_id).first()
     if item:
         session.delete(item)
         session.commit()
