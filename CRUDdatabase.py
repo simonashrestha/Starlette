@@ -63,6 +63,8 @@ async def update_item(request: Request):
     item = session.query(Products).filter(Products.id == item_id).first()
     if item:
         item.name = data['name']
+        item.quantity= data['quantity']
+        item.category= data['category']
         session.commit()
         session.refresh(item)
         session.close()
